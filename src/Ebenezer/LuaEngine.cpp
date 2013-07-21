@@ -83,6 +83,7 @@ DEFINE_LUA_FUNCTION_TABLE(g_globalFunctions,
 	MAKE_LUA_FUNCTION(ZoneChangeClan)
 	MAKE_LUA_FUNCTION(KissUser)
 	MAKE_LUA_FUNCTION(ChangeManner)
+	MAKE_LUA_FUNCTION(GetClass)	
 );
 #endif
 
