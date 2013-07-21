@@ -85,6 +85,7 @@ DEFINE_LUA_FUNCTION_TABLE(g_globalFunctions,
 	MAKE_LUA_FUNCTION(ChangeManner)
 	MAKE_LUA_FUNCTION(GetClass)	
 	MAKE_LUA_FUNCTION(CheckKnight)
+	MAKE_LUA_FUNCTION(CheckStatPoint) 
 );
 #endif
 
