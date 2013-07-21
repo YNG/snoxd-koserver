@@ -19,7 +19,7 @@ LUA_FUNCTION(PromoteKnight);
 LUA_FUNCTION(SelectMsg);
 LUA_FUNCTION(CastSkill);
 /*New Quest*/
-  LUA_FUNCTION(GetName);;
+	LUA_FUNCTION(GetName);;
 	LUA_FUNCTION(GetAccountName);;
 	LUA_FUNCTION(GetZoneID);;
 	LUA_FUNCTION(GetX);;
@@ -66,8 +66,8 @@ LUA_FUNCTION(CastSkill);
 	LUA_FUNCTION(PromoteUserNovice);
 	LUA_FUNCTION(PromoteUser);
 	LUA_FUNCTION(RobAllItemParty);
-	LUA_FUNCTION(ZoneChangeParty);
 	LUA_FUNCTION(ZoneChange);
+	LUA_FUNCTION(ZoneChangeParty);
 	LUA_FUNCTION(ZoneChangeClan);
 	LUA_FUNCTION(KissUser);
 	LUA_FUNCTION(ChangeManner);
