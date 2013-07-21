@@ -118,7 +118,7 @@ break;
 
 case MAGIC_CANCEL:
 case MAGIC_CANCEL2:
-Type3Cancel();	//Damage over Time skills.
+Type3Cancel(); //Damage over Time skills.
 Type4Cancel();	//Buffs
 Type6Cancel();	//Transformations
 Type9Cancel();	//Stealth, lupine etc.
@@ -178,14 +178,11 @@ if (pSkillCaster->GetZoneID() == ZONE_SNOW_BATTLE && g_pMain->m_byBattleOpen == 
 && nSkillID != SNOW_EVENT_SKILL)
 return SkillUseFail;
 
-// If a target is specified, and we're using an attack skill, determine if the caster can attack the target.
-// NOTE: This disregards whether we're trying/able to attack ourselves (which may be skill induced?).
-if (pSkillTarget != nullptr
-&& (pSkill->bMoral == MORAL_ENEMY || pSkill->bMoral == MORAL_NPC || pSkill->bMoral == MORAL_ALL))
-{
 // Handle death taunts (i.e. pressing the spacebar on a corpse).
 // NOTE: These skills don't really have any other generic means of identification.
-if (pSkill->bType[0] == 3
+if (pSkillTarget != nullptr
+&& pSkill->bMoral == MORAL_ENEMY
+&& pSkill->bType[0] == 3
 && pSkill->bType[1] == 0
 // Target player must be a corpse.
 && pSkillTarget->isDead())
@@ -205,12 +202,6 @@ sData[1] = 1;
 SendSkill();
 return SkillUseHandled;
 }
-}
-
-// Finally, ensure the caster is able to attack the target.
-// This is actually a little redundant with IsAvailable(), but we'll leave it in for now.
-if (!pSkillCaster->CanAttack(pSkillTarget))
-return SkillUseFail;
 }
 
 // Archer & transformation skills will handle item checking themselves
@@ -632,57 +623,32 @@ this->sCasterID, this->sTargetID, this->bOpcode, this->nSkillID, this->sData);
 
 bool MagicInstance::IsAvailable()
 {
-CUser* pParty = nullptr; // When the target is a party....
-int modulator = 0, Class = 0, moral = 0, skill_mod = 0 ;
-bool isNPC = (sCasterID >= NPC_BAND);	// Identifies source : true means source is NPC.
+CUser* pParty = nullptr;
+int modulator = 0, Class = 0, skill_mod = 0 ;
 
 if (pSkill == nullptr)
 goto fail_return;
 
-if (sTargetID >= 0 && sTargetID < MAX_USER)
-moral = pSkillTarget->GetNation();
-else if (sTargetID >= NPC_BAND) // Target existence check routine for NPC.
+switch (pSkill->bMoral)
 {
-if (pSkillTarget == nullptr || pSkillTarget->isDead())
-goto fail_return;	//... Assuming NPCs can't be resurrected.
-
-moral = pSkillTarget->GetNation();
-}
-else if (sTargetID == -1) // AOE/Party Moral check routine.
-{
-if (isNPC)
-{
-moral = 1;
-}
-else
-{
-if (pSkill->bMoral == MORAL_AREA_ENEMY)
-moral = pSkillCaster->GetNation() == KARUS ? ELMORAD : KARUS;
-else
-moral = pSkillCaster->GetNation();	
-}
-}
-else
-moral = pSkillCaster->GetNation();
-
-if(pSkillCaster->m_pMap->canAttackOtherNation())
-{
-switch( pSkill->bMoral ) {	// Compare morals between source and target character.
-case MORAL_SELF: // #1 // ( to see if spell is cast on the right target or not )
+case MORAL_SELF:
 if (pSkillCaster != pSkillTarget)
 goto fail_return;
 break;
-case MORAL_FRIEND_WITHME: // #2
-if (moral != 0 &&
-pSkillCaster->GetNation() != moral)
+
+case MORAL_FRIEND_WITHME:
+if (pSkillTarget != pSkillCaster
+&& pSkillCaster->isHostileTo(pSkillTarget))
 goto fail_return;
 break;
-case MORAL_FRIEND_EXCEPTME: // #3
-if (pSkillCaster->GetNation() != moral
-|| pSkillCaster == pSkillTarget)
+
+case MORAL_FRIEND_EXCEPTME:
+if (pSkillCaster == pSkillTarget
+|| pSkillCaster->isHostileTo(pSkillTarget))
 goto fail_return;
 break;
-case MORAL_PARTY: // #4
+
+case MORAL_PARTY:
 {
 // NPCs can't *be* in parties.
 if (pSkillCaster->isNPC()
@@ -694,58 +660,40 @@ CUser *pCaster = TO_USER(pSkillCaster);
 
 // If the caster's not in a party, make sure the target's not someone other than themselves.
 if ((!pCaster->isInParty() && pSkillCaster != pSkillTarget)
-// Verify that the nation matches the intended moral
-|| pCaster->GetNation() != moral
-// and that if there is a target, they're in the same party.
+// Also ensure that if there is a target, they're in the same party.
 || (pSkillTarget != nullptr &&
 TO_USER(pSkillTarget)->GetPartyID() != pCaster->GetPartyID()))
 goto fail_return;
 } break;
-case MORAL_NPC: // #5
+
+case MORAL_NPC:
 if (pSkillTarget == nullptr
 || !pSkillTarget->isNPC()
-|| pSkillTarget->GetNation() != moral)
+|| pSkillCaster->isHostileTo(pSkillTarget))
 goto fail_return;
 break;
-case MORAL_PARTY_ALL: // #6
-// if ( !m_pSrcUser->isInParty() ) goto fail_return;
-// if ( !m_pSrcUser->isInParty() && sid != tid) goto fail_return;
 
-break;
-case MORAL_ENEMY: // #7
+case MORAL_ENEMY:
 // Nation alone cannot dictate whether a unit can attack another.
 // As such, we must check behaviour specific to these entities.
 // For example: same nation players attacking each other in an arena.
-if (!pSkillCaster->CanAttack(pSkillTarget))
+if (!pSkillCaster->isHostileTo(pSkillTarget))
 goto fail_return;
 break;	
-case MORAL_ALL: // #8
-// N/A
-break;
-case MORAL_AREA_ENEMY: // #10
-// N/A
-break;
-case MORAL_AREA_FRIEND: // #11
-if (pSkillCaster->GetNation() != moral)
-goto fail_return;
-break;
-case MORAL_AREA_ALL: // #12
-// N/A
-break;
-case MORAL_SELF_AREA: // #13
-// Remeber, EVERYONE in the area is affected by this one. No moral check!!!
-break;
-case MORAL_CORPSE_FRIEND: // #25
-if (pSkillCaster->GetNation() != moral
+
+case MORAL_CORPSE_FRIEND:
 // We need to revive *something*.
-|| pSkillTarget == nullptr
+if (pSkillTarget == nullptr
+// Are we allowed to revive this person?
+|| pSkillCaster->isHostileTo(pSkillTarget)
 // We cannot revive ourselves.
 || pSkillCaster == pSkillTarget
 // We can't revive living targets.
 || pSkillTarget->isAlive())
 goto fail_return;
 break;
-case MORAL_CLAN: // #14
+
+case MORAL_CLAN:
 {
 // NPCs cannot be in clans.
 if (pSkillCaster->isNPC()
@@ -757,23 +705,17 @@ CUser * pCaster = TO_USER(pSkillCaster);
 
 // If the caster's not in a clan, make sure the target's not someone other than themselves.
 if ((!pCaster->isInClan() && pSkillCaster != pSkillTarget)
-// Verify the intended moral
-|| pCaster->GetNation() != moral
 // If we're targeting someone, that target must be in our clan.
 || (pSkillTarget != nullptr
 && TO_USER(pSkillTarget)->GetClanID() != pCaster->GetClanID()))
 goto fail_return;
 } break;
 
-case MORAL_CLAN_ALL: // #15
-break;
-
 case MORAL_SIEGE_WEAPON:
 if (pSkillCaster->isPlayer()
 || !TO_USER(pSkillCaster)->isSiegeTransformation())
 goto fail_return;
 break;
-}
 }
 
 // Check skill prerequisites
@@ -909,13 +851,12 @@ pSkillCaster->HpChange(-10000);
 }
 }
 
-return true; // Magic was successful!
+return true;
 
-fail_return: // In case of failure, send a packet(!)
-if (!isNPC)
+fail_return:
 SendSkillFailed();
 
-return false; // Magic was a failure!
+return false;
 }
 
 bool MagicInstance::ExecuteType1()
