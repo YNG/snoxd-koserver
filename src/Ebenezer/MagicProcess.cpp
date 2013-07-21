@@ -42,7 +42,7 @@ Unit * pTarget, Unit * pCaster /*= nullptr*/,
 bool bIsRecastingSavedMagic /*= false*/)
 {
 Packet result(AG_MAGIC_ATTACK_REQ, uint8(opcode));
-int16	sCasterID = (pCaster == nullptr ? -1 : pCaster->GetID()),
+int16  sCasterID = (pCaster == nullptr ? -1 : pCaster->GetID()),
 sTargetID = (pTarget == nullptr ? -1 : pTarget->GetID());
 result << nSkillID << sCasterID << sTargetID << bIsRecastingSavedMagic;
 g_pMain->Send_AIServer(&result);
@@ -131,12 +131,12 @@ break;
 // For example: same nation players attacking each other in an arena.
 case MORAL_SELF_AREA:
 case MORAL_AREA_ENEMY:
-if (pSkillCaster->CanAttack(pSkillTarget))
+if (pSkillCaster->isHostileTo(pSkillTarget))
 goto final_test;
 break;
 
 case MORAL_AREA_FRIEND:
-if (pSkillTarget->GetNation() == pSkillCaster->GetNation())
+if (!pSkillCaster->isHostileTo(pSkillTarget))
 goto final_test;
 break;
 
