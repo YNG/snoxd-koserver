@@ -73,3 +73,4 @@ LUA_FUNCTION(CastSkill);
 	LUA_FUNCTION(ChangeManner);
 	LUA_FUNCTION(CheckClanGrade);
 	LUA_FUNCTION(CheckLoyalty); 
+	LUA_FUNCTION(CheckKnight);
