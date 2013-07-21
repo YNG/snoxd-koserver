@@ -47,7 +47,8 @@ DEFINE_LUA_CLASS
 	MAKE_LUA_METHOD(GetMonthlyLoyalty)
 	MAKE_LUA_METHOD(GetManner)
 	MAKE_LUA_METHOD(GetActiveQuestID)
-	MAKE_LUA_METHOD(GetClanGrade) 
+	MAKE_LUA_METHOD(GetClanGrade)
+	MAKE_LUA_METHOD(GetClanRank)
 
 	MAKE_LUA_METHOD(isWarrior)
 	MAKE_LUA_METHOD(isRogue)
@@ -281,6 +282,7 @@ _LUA_WRAPPER_USER_FUNCTION(PromoteKnight, PromoteClan);
 	_LUA_WRAPPER_USER_FUNCTION(PromoteClan, PromoteClan);
 	_LUA_WRAPPER_USER_FUNCTION(CheckClanGrade, GetClanGrade);
 	_LUA_WRAPPER_USER_FUNCTION(CheckLoyalty, GetLoyalty); 
+	_LUA_WRAPPER_USER_FUNCTION(CheckKnight, GetClanRank);
 
 LUA_FUNCTION(SelectMsg)
 {
