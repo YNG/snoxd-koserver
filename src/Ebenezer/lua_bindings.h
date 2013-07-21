@@ -71,3 +71,5 @@ LUA_FUNCTION(CastSkill);
 	LUA_FUNCTION(ZoneChangeClan);
 	LUA_FUNCTION(KissUser);
 	LUA_FUNCTION(ChangeManner);
+	LUA_FUNCTION(CheckClanGrade);
+	LUA_FUNCTION(CheckLoyalty); 
