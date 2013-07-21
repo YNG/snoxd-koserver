@@ -10,7 +10,7 @@ struct _KNIGHTS_USER;
 struct _EXCHANGE_ITEM;
 struct _USER_SEAL_ITEM;
 
-typedef std::map<uint64, _USER_SEAL_ITEM*>	UserItemSealMap;
+typedef std::map<uint64, _USER_SEAL_ITEM*>  UserItemSealMap;
 typedef	std::list<_EXCHANGE_ITEM*>	ItemList;
 typedef	std::map<uint32, time_t>	SkillCooldownList;
 typedef	std::map<uint32, time_t>	UserSavedMagicMap;
@@ -901,7 +901,7 @@ bool PromoteUser();
 void PromoteClan(ClanTypeFlag byFlag);
 
 // Attack/zone checks
-bool CanAttack(Unit * pTarget);
+bool isHostileTo(Unit * pTarget);
 bool isInArena();
 bool isInPVPZone();
 
