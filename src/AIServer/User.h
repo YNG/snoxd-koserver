@@ -10,102 +10,106 @@ class MAP;
 class CUser : public Unit
 {
 public:
-	INLINE bool isGM() { return m_byIsOP == AUTHORITY_GAME_MASTER; }
+INLINE bool isGM() { return m_byIsOP == AUTHORITY_GAME_MASTER; }
 
-	virtual uint16 GetID() { return m_iUserId; }
-	virtual std::string & GetName() { return m_strUserID; }
+virtual uint16 GetID() { return m_iUserId; }
+virtual std::string & GetName() { return m_strUserID; }
 
-	virtual int32 GetHealth() { return m_sHP; }
-	virtual int32 GetMaxHealth() { return m_sMaxHP; }
-	virtual int32 GetMana() { return m_sMP; }
-	virtual int32 GetMaxMana() { return m_sMaxMP; }
+virtual int32 GetHealth() { return m_sHP; }
+virtual int32 GetMaxHealth() { return m_sMaxHP; }
+virtual int32 GetMana() { return m_sMP; }
+virtual int32 GetMaxMana() { return m_sMaxMP; }
 
-	virtual void GetInOut(Packet &, uint8) {}
-	virtual void AddToRegion(int16 sRegionX, int16 sRegionZ) {}
+virtual void GetInOut(Packet &, uint8) {}
+virtual void AddToRegion(int16 sRegionX, int16 sRegionZ) {}
 
-	virtual void HpChange(int amount, Unit *pAttacker = nullptr, bool bSendToAI = true) {}
-	virtual void MSpChange(int amount) {}
+virtual void HpChange(int amount, Unit *pAttacker = nullptr, bool bSendToAI = true) {}
+virtual void MSpChange(int amount) {}
 
-	virtual bool isDead() { return m_bLive == AI_USER_DEAD || GetHealth() <= 0; }
+virtual bool isDead() { return m_bLive == AI_USER_DEAD || GetHealth() <= 0; }
 
-	INLINE bool isInParty() { return m_byNowParty != 0; }
-	INLINE uint16 GetPartyID() { return m_sPartyNumber; }
+INLINE bool isInParty() { return m_byNowParty != 0; }
+INLINE uint16 GetPartyID() { return m_sPartyNumber; }
 
-	std::string m_strUserID;
-	short	m_iUserId;					// UserÀÇ ¹øÈ£
-	uint8	m_bLive;					// Á×¾ú´Ï? »ì¾Ò´Ï?
+std::string m_strUserID;
+short	m_iUserId;	// Userì˜ ë²ˆí˜¸
+uint8	m_bLive;	// ì£½ì—ˆë‹ˆ? ì‚´ì•˜ë‹ˆ?
 
-	float			m_fWill_x;			// ´ÙÀ½ X ÁÂÇ¥
-	float			m_fWill_y;			// ´ÙÀ½ Y ÁÂÇ¥
-	float			m_fWill_z;			// ´ÙÀ½ Z ÁÂÇ¥
-	short			m_sSpeed;			// À¯ÀúÀÇ ½ºÇÇµå	
+float	m_fWill_x;	// ë‹¤ìŒ X ì¢Œí‘œ
+float	m_fWill_y;	// ë‹¤ìŒ Y ì¢Œí‘œ
+float	m_fWill_z;	// ë‹¤ìŒ Z ì¢Œí‘œ
+short	m_sSpeed;	// ìœ ì €ì˜ ìŠ¤í”¼ë“œ
 
-	short	m_sHP;							// HP
-	short	m_sMP;							// MP
-	short	m_sMaxHP;						// HP
-	short	m_sMaxMP;						// MP
+short	m_sHP;	// HP
+short	m_sMP;	// MP
+short	m_sMaxHP;	// HP
+short	m_sMaxMP;	// MP
 
-	uint8	m_state;						// UserÀÇ »óÅÂ
+uint8	m_state;	// Userì˜ ìƒíƒœ
 
-	short	m_sOldRegionX;					// ÀÌÀü ¿µ¿ª X ÁÂÇ¥
-	short	m_sOldRegionZ;					// ÀÌÀü ¿µ¿ª Z ÁÂÇ¥
+short	m_sOldRegionX;	// ì´ì „ ì˜ì—­ X ì¢Œí‘œ
+short	m_sOldRegionZ;	// ì´ì „ ì˜ì—­ Z ì¢Œí‘œ
 
-	uint8	m_bResHp;						// È¸º¹·®
-	uint8	m_bResMp;
-	uint8	m_bResSta;
+uint8	m_bResHp;	// íšŒë³µëŸ‰
+uint8	m_bResMp;
+uint8	m_bResSta;
 
-	uint8    m_byNowParty;				// ÆÄÆ¼ÁßÀÌ¸é 1, ºÎ´ëÁßÀÌ¸é 2, µÑ´Ù ¾Æ´Ï¸é 0
-	uint8	m_byPartyTotalMan;			// ÆÄÆ¼ ¸ÎÀº ÃÑ ±¸¼º ÀÎ¿ø¼ö 
-	short   m_sPartyTotalLevel;			// ÆÄÆ¼ ¸ÎÀº »ç¶÷ÀÇ ÃÑ ·¹º§
-	short	m_sPartyNumber;				// ÆÄÆ¼ ¹øÈ£
+uint8 m_byNowParty;	// íŒŒí‹°ì¤‘ì´ë©´ 1, ë¶€ëŒ€ì¤‘ì´ë©´ 2, ë‘˜ë‹¤ ì•„ë‹ˆë©´ 0
+uint8	m_byPartyTotalMan;	// íŒŒí‹° ë§ºì€ ì´ êµ¬ì„± ì¸ì›ìˆ˜
+short m_sPartyTotalLevel;	// íŒŒí‹° ë§ºì€ ì‚¬ëžŒì˜ ì´ ë ˆë²¨
+short	m_sPartyNumber;	// íŒŒí‹° ë²ˆí˜¸
 
-	short   m_sItemAc;                  // ¾ÆÀÌÅÛ ¹æ¾î·ü
+short m_sItemAc; // ì•„ì´í…œ ë°©ì–´ë¥ 
 
-	short  m_sSurroundNpcNumber[8];		// Npc ´Ù±¼~
+short m_sSurroundNpcNumber[8];	// Npc ë‹¤êµ´~
 
-	uint8   m_byIsOP;
-	uint8	m_bInvisibilityType;
+uint8 m_byIsOP;
+uint8	m_bInvisibilityType;
 
 public:
-	void Initialize();
-	void InitNpcAttack();
-	void Attack(int sid, int tid);	// ATTACK
-	bool SetDamage(int damage, int attackerID);
-	void Dead(int tid, int nDamage);					// user dead
-	void SetExp(int iNpcExp, int iLoyalty, int iLevel);		// user exp
-	void SetPartyExp(int iNpcExp, int iLoyalty, int iPartyLevel, int iMan);		// user exp
-	int IsSurroundCheck(float fX, float fY, float fZ, int NpcID);
-	void HealMagic();
-	void HealAreaCheck(int rx, int rz);
+void Initialize();
+void InitNpcAttack();
+void Attack(int sid, int tid);	// ATTACK
+bool SetDamage(int damage, int attackerID);
+void Dead(int tid, int nDamage);	// user dead
+void SetExp(int iNpcExp, int iLoyalty, int iLevel);	// user exp
+void SetPartyExp(int iNpcExp, int iLoyalty, int iPartyLevel, int iMan);	// user exp
+int IsSurroundCheck(float fX, float fY, float fZ, int NpcID);
+void HealMagic();
+void HealAreaCheck(int rx, int rz);
 
-	void SendAttackSuccess(short tid, uint8 result, short sDamage, int nHP=0, short sAttack_type=1, uint8 type = 1, short sid = -1);
-	void SendHP();												// userÀÇ HP
-	void SendExp(int32 iExp, int32 iLoyalty, int tType = 1);
+void SendAttackSuccess(short tid, uint8 result, short sDamage, int nHP=0, short sAttack_type=1, uint8 type = 1, short sid = -1);
+void SendHP();	// userì˜ HP
+void SendExp(int32 iExp, int32 iLoyalty, int tType = 1);
 
-	short GetDamage(Unit *pTarget, _MAGIC_TABLE *pSkill = nullptr, bool bPreviewOnly = false);
+bool isHostileTo(Unit * pTarget);
+bool isInArena();
+bool isInPVPZone();
 
-	CUser();
-	virtual ~CUser();
+short GetDamage(Unit *pTarget, _MAGIC_TABLE *pSkill = nullptr, bool bPreviewOnly = false);
 
-	// Placeholders, for the magic system.
-	// These should really be using the same base class.
-	INLINE bool isInClan() { return false; }
-	INLINE uint16 GetClanID() { return 0; }
-	INLINE uint8 GetStat(StatType type) { return 0; }
-	INLINE void SetStatBuff(StatType type, uint8 val) {}
-		
-	void RemoveSavedMagic(uint32 nSkillID) {}
-	void SendUserStatusUpdate(UserStatus type, UserStatusBehaviour status) {}
-	void SetUserAbility(bool bSendPacket = true) {}
-	void Send(Packet * pkt) {}
+CUser();
+virtual ~CUser();
 
-	time_t	m_tLastRegeneTime;
-	uint32	m_nOldAbnormalType;
-	uint16	m_sExpGainAmount;
-	uint8	m_bMaxWeightAmount, m_bNPGainAmount, m_bNoahGainAmount, 
-			m_bPlayerAttackAmount, m_bSkillNPBonus,
-			m_bAddWeaponDamage;
-	uint16	m_sAddArmourAc;
-	uint8	m_bPctArmourAc;
-	bool	m_bPremiumMerchant;
+// Placeholders, for the magic system.
+// These should really be using the same base class.
+INLINE bool isInClan() { return false; }
+INLINE uint16 GetClanID() { return 0; }
+INLINE uint8 GetStat(StatType type) { return 0; }
+INLINE void SetStatBuff(StatType type, uint8 val) {}
+
+void RemoveSavedMagic(uint32 nSkillID) {}
+void SendUserStatusUpdate(UserStatus type, UserStatusBehaviour status) {}
+void SetUserAbility(bool bSendPacket = true) {}
+void Send(Packet * pkt) {}
+
+time_t	m_tLastRegeneTime;
+uint32	m_nOldAbnormalType;
+uint16	m_sExpGainAmount;
+uint8	m_bMaxWeightAmount, m_bNPGainAmount, m_bNoahGainAmount,
+m_bPlayerAttackAmount, m_bSkillNPBonus,
+m_bAddWeaponDamage;
+uint16	m_sAddArmourAc;
+uint8	m_bPctArmourAc;
+bool	m_bPremiumMerchant;
 };
