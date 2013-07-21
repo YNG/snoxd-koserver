@@ -97,7 +97,7 @@ void MagicInstance::Run()
 			// Need to find a better way of handling this.
 			if (!bIsRecastingSavedMagic
 				&& (pSkill->bType[0] == 0 && pSkill->bType[1] != 0 && pSkill->iUseItem != 0
-				&& (pSkillCaster->isPlayer() && TO_USER(pSkillCaster)->CheckExistItem(pSkill->iUseItem, 1))))
+				&& (pSkillCaster->isPlayer() && TO_USER(pSkillCaster)->CheckExistItem(pSkill->iUseItem))))
 			{
 				SendTransformationList();
 				return;
@@ -107,7 +107,12 @@ void MagicInstance::Run()
 
 			// NOTE: Some ROFD skills require a THIRD type.
 			if (bInitialResult)
+			{
 				ExecuteSkill(pSkill->bType[1]);
+
+				if (pSkill->bType[0] != 2)
+					ConsumeItem();
+			}
 			break;
 
 		case MAGIC_TYPE3_END: //This is also MAGIC_TYPE4_END
@@ -214,7 +219,20 @@ SkillUseResult MagicInstance::UserCanCast()
 		if ((pSkill->bType[0] != 2 && pSkill->bType[0] != 6) 
 			// The user does not meet the item's requirements or does not have any of said item.
 			&& (pSkill->iUseItem != 0
-				&& !TO_USER(pSkillCaster)->CanUseItem(pSkill->iUseItem, 1))) 
+				&& !TO_USER(pSkillCaster)->CanUseItem(pSkill->iUseItem))) 
+			return SkillUseFail;
+
+		// Some skills also require class-specific stones which are taken instead of UseItem.
+		// In this case, UseItem is considered a required item and not consumed on skill use.
+		if (pSkill->bBeforeAction >= ClassWarrior && pSkill->bBeforeAction <= ClassPriest)
+			nConsumeItem = CLASS_STONE_BASE_ID + (pSkill->bBeforeAction * 1000);
+		else
+			nConsumeItem = pSkill->iUseItem;
+
+		if ((pSkill->bType[0] != 2 && pSkill->bType[0] != 6) 
+			// The user does not meet the item's requirements or does not have any of said item.
+			&& (pSkill->iUseItem != 0
+				&& !TO_USER(pSkillCaster)->CanUseItem(nConsumeItem))) 
 			return SkillUseFail;
 
 		// We cannot use CSW transformations outside of Delos (or when CSW is not enabled.)
@@ -353,8 +371,11 @@ bool MagicInstance::CheckType3Prerequisites()
 bool MagicInstance::CheckType4Prerequisites()
 {
 	_MAGIC_TYPE4 * pType = g_pMain->m_Magictype4Array.GetData(nSkillID);
+
+	// Certain transformation (type 6) skills state they have an associated
+	// type 4 skill but do not have any entry in the table. Consider these OK.
 	if (pType == nullptr)
-		return false;
+		return (pSkill->bType[0] == 6);
 
 	if (sTargetID < 0 || sTargetID >= MAX_USER)
 	{
@@ -796,8 +817,7 @@ bool MagicInstance::IsAvailable()
 					if( !pItem ) return false;
 
 					if ((pItem->m_bClass != 0 && !TO_USER(pSkillCaster)->JobGroupCheck(pItem->m_bClass))
-						|| (pItem->m_bReqLevel != 0 && TO_USER(pSkillCaster)->GetLevel() < pItem->m_bReqLevel)
-						|| (!TO_USER(pSkillCaster)->RobItem(pSkill->iUseItem, 1)))	
+						|| (pItem->m_bReqLevel != 0 && TO_USER(pSkillCaster)->GetLevel() < pItem->m_bReqLevel))	
 						return false;
 				}
 			}
@@ -1703,7 +1723,7 @@ bool MagicInstance::ExecuteType6()
 
 		// Attempt to take the item (no further checks, so no harm in multipurposing)
 		// If we add more checks, remember to change this check.
-		if (!TO_USER(pSkillCaster)->RobItem(iUseItem, 1))
+		if (!TO_USER(pSkillCaster)->RobItem(iUseItem))
 			return false;
 
 		// User's casting a new skill. Use the full duration.
@@ -2435,4 +2455,10 @@ void MagicInstance::ReflectDamage(int32 damage, Unit * pTarget)
 			pSkillCaster->HpChange(-damage, pTarget);
 		break;
 	}
+}
+
+void MagicInstance::ConsumeItem()
+{
+	if (nConsumeItem != 0 && pSkillCaster->isPlayer())
+		TO_USER(pSkillCaster)->RobItem(nConsumeItem);
 }
