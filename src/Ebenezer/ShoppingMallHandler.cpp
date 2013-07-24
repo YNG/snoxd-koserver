@@ -8,29 +8,20 @@ void CUser::ShoppingMall(Packet & pkt)
 	switch (opcode)
 	{
 	case STORE_OPEN:
-		TRACE("STORE_OPEN\n");
 		HandleStoreOpen(pkt);
 		break;
 
 	case STORE_CLOSE:
-		TRACE("STORE_CLOSE\n");
 		HandleStoreClose();
 		break;
 
 	case STORE_BUY:
-		TRACE("STORE_BUY\n");
-		break;
-
 	case STORE_MINI: // not sure what this is
-		TRACE("STORE_MINI\n");
-		break;
-
 	case STORE_PROCESS:
-		TRACE("STORE_PROCESS\n");
+		/* fairly certain there's no need to emulate these as they're unused */
 		break;
 
 	case STORE_LETTER:
-		TRACE("STORE_LETTER\n");
 		LetterSystem(pkt);
 		break;
 
