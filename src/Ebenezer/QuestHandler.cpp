@@ -375,11 +375,11 @@ uint8 CUser::CheckMonsterCount(uint8 bGroup)
 // First job change; you're a [novice], Harry!
 bool CUser::PromoteUserNovice()
 {
-	uint8 bNewClasses[] = { 5, 7, 9, 11 };
-	uint8 bOldClass = (GetClass() % 100) - 1; // convert base class 1,2,3,4 to 0,1,2,3 to align with bNewClasses
+	uint8 bNewClasses[] = { ClassWarriorNovice, ClassRogueNovice, ClassMageNovice, ClassPriestNovice };
+	uint8 bOldClass = GetClassType() - 1; // convert base class 1,2,3,4 to 0,1,2,3 to align with bNewClasses
 
 	// Make sure it's a beginner class.
-	if (bOldClass >= 4)
+	if (!isBeginner())
 		return false;
 
 	Packet result(WIZ_CLASS_CHANGE, uint8(6));
@@ -405,10 +405,10 @@ bool CUser::PromoteUserNovice()
 bool CUser::PromoteUser()
 {
 	/* unlike the official, the checks & item removal should be handled in the script, not here */
-	uint8 bOldClass = (GetClass() % 100);
+	uint8 bOldClass = GetClassType();
 
-	// If we're not dealing with a 'novice' class (5, 7, 9, 11 -- mastered class are +1 from here).
-	if (bOldClass != 5 && bOldClass != 7 && bOldClass != 9 && bOldClass != 11)
+	// We must be a novice before we can be promoted to master.
+	if (!isNovice()) 
 		return false;
 
 	Packet result(WIZ_CLASS_CHANGE, uint8(6));

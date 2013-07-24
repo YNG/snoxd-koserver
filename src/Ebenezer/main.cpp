@@ -14,7 +14,6 @@ bool g_bRunning = true;
 
 int main()
 {
-
 	SetConsoleTitle("Game server for Knight Online v" STRINGIFY(__VERSION));
 
 #ifdef WIN32
