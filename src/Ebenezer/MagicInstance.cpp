@@ -231,7 +231,7 @@ SkillUseResult MagicInstance::UserCanCast()
 		// For skills that are unlocked via quests, ensure the user has actually 
 		// completed the quest...
 		// NOTE: GMs are excluded.
-		if (!pSkillCaster->isGM()
+		if (!TO_USER(pSkillCaster)->isGM()
 			&& pSkill->sEtc != 0
 			&& !TO_USER(pSkillCaster)->CheckExistEvent(pSkill->sEtc, 2))
 			return SkillUseFail;
